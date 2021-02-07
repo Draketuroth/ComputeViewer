@@ -31,10 +31,10 @@ extern "C"
 		ref->SetDispatchSize(x, y, z);
 	}
 
-	__declspec(dllexport) void dispatch(void* ptr)
+	__declspec(dllexport) bool dispatch(void* ptr)
 	{
 		Compute* ref = reinterpret_cast<Compute*>(ptr);
-		ref->Dispatch();
+		return ref->Dispatch();
 	}
 
 	__declspec(dllexport) unsigned char* readBackData(void* ptr)

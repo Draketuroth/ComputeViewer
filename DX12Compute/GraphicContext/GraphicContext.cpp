@@ -2,7 +2,7 @@
 #include "pch.h"
 
 #include "GraphicContext/GraphicContext.h"
-#include "Utilities/DXHelper.h"
+#include "Utilities/PrintHelper.h"
 
 #include <dxgi1_6.h>
 
@@ -11,50 +11,49 @@ GraphicContext::GraphicContext() :
     device(nullptr),
     fence(nullptr),
     handle(CreateEventEx(nullptr, FALSE, FALSE, EVENT_ALL_ACCESS)),
-    cnt(0)
+    counter(0)
 {
-    HRESULT hr = Initialize();
+    Initialize();
 }
 
 GraphicContext::~GraphicContext()
 {
-    SAFE_RELEASE(fence);
-    SAFE_RELEASE(commandQueue);
-    SAFE_RELEASE(device);
+
 }
 
-void GraphicContext::Wait()
+bool GraphicContext::Wait()
 {
     // Fence value update.
-    ++cnt;
+    ++counter;
 
     // Change fence value.
-    auto hr = commandQueue->Signal(fence, cnt);
-    if (FAILED(hr))
-    {
+    if (!ReportStatus(commandQueue->Signal(fence.Get(), counter), "Signaling command queue..."))
+        return false;
 
-        return;
-    }
+    DWORD timestamp = GetTickCount64();
 
     // Wait for completion (polling).
-    while (fence->GetCompletedValue() != cnt)
+    while (fence->GetCompletedValue() != counter)
     {
         // Set fence events
-        hr = fence->SetEventOnCompletion(cnt, handle);
-        if (FAILED(hr))
-        {
+        if (FAILED(fence->SetEventOnCompletion(counter, handle)))
+            return false;
 
-            return;
+        if ((GetTickCount64() - timestamp) > 10000)
+        {
+            PrintStatus("ERROR", "Time-out for fence event, dispatch was not successful");
+            return false;
         }
 
         // Wait for fence event.
         WaitForSingleObject(handle, INFINITE);
     }
+    return true;
 }
 
-HRESULT GraphicContext::Initialize()
+bool GraphicContext::Initialize()
 {
-    printf("Setting up graphic context...\n");
+    PrintStatus("INFO", "Setting up graphic context...");
 
     UINT dxgiFactoryFlags = 0;
 
@@ -63,52 +62,41 @@ HRESULT GraphicContext::Initialize()
     // NOTE: Enabling the debug layer after device creation will invalidate the active device.
     {
         Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
-        if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
-        {
-            debugController->EnableDebugLayer();
+        if (!ReportStatus(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)), "Enable debug interface"))
+            return false;
 
-            // Enable additional debug layers.
-            dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
-            printf("[OK] Enabled debug layer\n");
-        }
-        else
-        {
-            printf("[WARNING] Debug layer not successfully enabled!\n");
-        }
+        debugController->EnableDebugLayer();
+
+        // Enable additional debug layers.
+        dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
     }
 #endif
 
     Microsoft::WRL::ComPtr<IDXGIFactory4> factory;
-    ThrowIfFailed(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&factory)));
-
+    if (!ReportStatus(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&factory)), "Create DXGI factory"))
+        return false;
+    
     // Check hardware adapter support.
     Microsoft::WRL::ComPtr<IDXGIAdapter1> hardwareAdapter;
     GetHardwareAdapter(factory.Get(), &hardwareAdapter);
 
     // Create the device.
-    ThrowIfFailed(D3D12CreateDevice(
-        hardwareAdapter.Get(),
-        D3D_FEATURE_LEVEL_12_1,
-        IID_PPV_ARGS(&device)
-    ));
-
-    printf("[OK] Created device\n");
+    if (!ReportStatus(D3D12CreateDevice(hardwareAdapter.Get(), D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&device)), "Create Device"))
+        return false;
 
     // Describe and create the command queue.
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
     queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
     queueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY::D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
     queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-    ThrowIfFailed(device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&commandQueue)));
 
-    printf("[OK] Created command queue\n");
+    if (!ReportStatus(device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&commandQueue)), "Create command queue"))
+        return false;
 
-    // Create fence.
-    ThrowIfFailed(device->CreateFence(cnt, D3D12_FENCE_FLAGS::D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)));
+    if (ReportStatus(device->CreateFence(counter, D3D12_FENCE_FLAGS::D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)), "Create fence"))
+        return false;
 
-    printf("[OK] Created fence\n");
-
-    return S_OK;
+    return true;
 }
 
 void GraphicContext::GetHardwareAdapter(IDXGIFactory1* pFactory, IDXGIAdapter1** pAdapter, bool requestHighPerformanceAdapter)

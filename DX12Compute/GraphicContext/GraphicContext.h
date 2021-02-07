@@ -10,26 +10,26 @@ public:
     GraphicContext();
     ~GraphicContext();
 
-    void Wait();
+    bool Wait();
 
-    ID3D12CommandQueue* getCommandQueuePtr() const { return commandQueue; };
-    ID3D12Device* getDevicePtr() const { return device; }
-    ID3D12Fence* getFencePtr() const { return fence; }
+    ID3D12CommandQueue* getCommandQueuePtr() const { return commandQueue.Get(); };
+    ID3D12Device* getDevicePtr() const { return device.Get(); }
+    ID3D12Fence* getFencePtr() const { return fence.Get(); }
 
 private:
-    HRESULT Initialize();
+    bool Initialize();
 
     void GetHardwareAdapter(
         IDXGIFactory1* pFactory,
         IDXGIAdapter1** pAdapter,
         bool requestHighPerformanceAdapter = false);
 
-    ID3D12CommandQueue* commandQueue;
-    ID3D12Device6* device;
-    ID3D12Fence* fence;
+    Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue;
+    Microsoft::WRL::ComPtr<ID3D12Device6> device;
+    Microsoft::WRL::ComPtr<ID3D12Fence> fence;
     void* handle;
 
-    long long cnt;
+    long long counter;
 };
 
 #endif

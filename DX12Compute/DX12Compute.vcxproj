@@ -128,7 +128,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);D:\Program Files\Python\Python37\include;$(SolutionDir)Contrib\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -150,7 +150,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);D:\Program Files\Python\Python37\include;$(SolutionDir)Contrib\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -170,8 +170,8 @@
     <ClInclude Include="GraphicContext\GraphicContext.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Utilities\d3dx12.h" />
-    <ClInclude Include="Utilities\DXHelper.h" />
-    <ClInclude Include="wrapper.h" />
+    <ClInclude Include="Utilities\PrintHelper.h" />
+    <ClInclude Include="interface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Compute\Compute.cpp" />

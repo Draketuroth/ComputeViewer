@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>512</width>
-    <height>701</height>
+    <width>800</width>
+    <height>689</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,42 +18,26 @@
     <normaloff>../../../.designer/backup/Application.ico</normaloff>../../../.designer/backup/Application.ico</iconset>
   </property>
   <widget class="QWidget" name="CentralWidget">
-   <layout class="QVBoxLayout" name="CentralWidgetLayout">
-    <item>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
      <layout class="QGridLayout" name="RightRegionLayout">
       <property name="sizeConstraint">
        <enum>QLayout::SetDefaultConstraint</enum>
       </property>
-      <item row="0" column="0">
-       <widget class="QGroupBox" name="RightRegionGroup">
+      <item row="0" column="1">
+       <widget class="QGroupBox" name="LeftRegionGroup">
         <property name="title">
          <string>Preview</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="2" column="0" colspan="2">
-          <layout class="QGridLayout" name="DispatchButtonLayout">
-           <item row="0" column="0">
-            <widget class="QPushButton" name="DispatchButton">
-             <property name="font">
-              <font>
-               <pointsize>15</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Dispatch</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0">
+        <layout class="QGridLayout" name="LeftRegionGroupLayout">
+         <item row="2" column="0">
           <layout class="QGridLayout" name="ImageSettingsLayout">
            <item row="0" column="1">
             <widget class="QGroupBox" name="ImageSettingsGroupBox">
              <property name="title">
               <string>Image Settings</string>
              </property>
-             <layout class="QGridLayout" name="gridLayout_7">
+             <layout class="QGridLayout" name="ImageSettingsGroupBoxLayout">
               <item row="0" column="0">
                <layout class="QGridLayout" name="ImageDimensionsLayout">
                 <item row="0" column="0">
@@ -61,7 +45,7 @@
                   <property name="title">
                    <string>Dimensions</string>
                   </property>
-                  <layout class="QGridLayout" name="gridLayout_2">
+                  <layout class="QGridLayout" name="ImageDimensionsGroupBoxLayout">
                    <item row="1" column="0">
                     <widget class="QLabel" name="ImageHeightLabel">
                      <property name="text">
@@ -100,7 +84,75 @@
            </item>
           </layout>
          </item>
-         <item row="0" column="0" colspan="2">
+         <item row="2" column="1">
+          <layout class="QGridLayout" name="DispatchSettingsLayout">
+           <item row="0" column="0">
+            <widget class="QGroupBox" name="DispatchSettingsBox">
+             <property name="title">
+              <string>Dispatch Settings</string>
+             </property>
+             <layout class="QGridLayout" name="DispatchSettingsBoxLayout">
+              <item row="0" column="0">
+               <layout class="QGridLayout" name="DispatchDimensionsLayout">
+                <item row="0" column="0">
+                 <widget class="QGroupBox" name="DispatchDimensionsGroupBox">
+                  <property name="title">
+                   <string>Dimensions</string>
+                  </property>
+                  <layout class="QGridLayout" name="DispatchDimensionsGroupBoxlayout">
+                   <item row="0" column="1">
+                    <widget class="QLineEdit" name="DispatchXLineEdit">
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="DispatchZLabel">
+                     <property name="text">
+                      <string>Z</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="DispatchXLabel">
+                     <property name="text">
+                      <string>X</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="DispatchYLabel">
+                     <property name="text">
+                      <string>Y</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QLineEdit" name="DispatchZLineEdit">
+                     <property name="text">
+                      <string>1</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QLineEdit" name="DispatchYLineEdit">
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0" colspan="2">
           <layout class="QGridLayout" name="PreviewImageLayout">
            <item row="0" column="0">
             <widget class="QLabel" name="PreviewImageLabel">
@@ -123,71 +175,35 @@
            </item>
           </layout>
          </item>
-         <item row="1" column="1">
-          <layout class="QGridLayout" name="DispatchSettingsLayout">
+         <item row="3" column="0" colspan="2">
+          <layout class="QGridLayout" name="DispatchButtonLayout">
            <item row="0" column="0">
-            <widget class="QGroupBox" name="DispatchSettingsBox">
-             <property name="title">
-              <string>Dispatch Settings</string>
+            <widget class="QPushButton" name="DispatchButton">
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+              </font>
              </property>
-             <layout class="QGridLayout" name="gridLayout_6">
-              <item row="0" column="0">
-               <layout class="QGridLayout" name="DispatchDimensionsLayout">
-                <item row="0" column="0">
-                 <widget class="QGroupBox" name="DispatchDimensionsGroupBox">
-                  <property name="title">
-                   <string>Dimensions</string>
-                  </property>
-                  <layout class="QGridLayout" name="gridLayout_5">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="DispatchXLabel">
-                     <property name="text">
-                      <string>X</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="1">
-                    <widget class="QLineEdit" name="DispatchZLineEdit">
-                     <property name="text">
-                      <string>1</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="DispatchYLabel">
-                     <property name="text">
-                      <string>Y</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QLineEdit" name="DispatchYLineEdit">
-                     <property name="text">
-                      <string>0</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="0">
-                    <widget class="QLabel" name="DispatchZLabel">
-                     <property name="text">
-                      <string>Z</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QLineEdit" name="DispatchXLineEdit">
-                     <property name="text">
-                      <string>0</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
+             <property name="text">
+              <string>Dispatch</string>
+             </property>
             </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QGroupBox" name="RightRegionGroup">
+        <property name="title">
+         <string>Editor</string>
+        </property>
+        <layout class="QGridLayout" name="RightRegionGroupLayout">
+         <item row="0" column="0">
+          <layout class="QGridLayout" name="EditorLayout">
+           <item row="3" column="0">
+            <widget class="QPlainTextEdit" name="plainTextEdit"/>
            </item>
           </layout>
          </item>
@@ -203,7 +219,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>512</width>
+     <width>800</width>
      <height>21</height>
     </rect>
    </property>
@@ -221,7 +237,7 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionAbout_ComputeViewer"/>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuHelp"/>
@@ -252,7 +268,7 @@
     <string>Exit</string>
    </property>
   </action>
-  <action name="actionAbout_ComputeViewer">
+  <action name="actionAbout">
    <property name="text">
     <string>About ComputeViewer</string>
    </property>

@@ -35,11 +35,11 @@
     <ClInclude Include="Utilities\d3dx12.h">
       <Filter>Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Utilities\DXHelper.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="wrapper.h">
+    <ClInclude Include="interface.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\PrintHelper.h">
+      <Filter>Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

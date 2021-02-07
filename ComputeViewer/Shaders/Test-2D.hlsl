@@ -6,5 +6,5 @@ SamplerState BilinearClamp : register(s0);
 void main(uint3 DTid : SV_DispatchThreadID)
 {
 	//Write the final color into the destination texture.
-	DstTexture[DTid.xy] = float4(1.0f, 1.0f, 0.0f, 1.0f);
+	DstTexture[DTid.xy] = float4(1.0f, 0.0f, 0.0f, 1.0f);
 }

@@ -24,6 +24,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
         self.actionLoad.triggered.connect(self.openFileNameDialog)
         
+        self.actionAbout.triggered.connect(self.openAboutDialog)
+        
+        self.actionExit.triggered.connect(self.quitApplication)
+        
+    def quitApplication(self):
+        app.exit() 
+        
+    def openAboutDialog(self):
+        
+        msg = "Compute Viewer 1.0\nAuthor: Fredrik Linde"
+        QtWidgets.QMessageBox.about(self, "About", msg)
+        
     def openFileNameDialog(self):
         options = QtWidgets.QFileDialog.Options()
         options |= QtWidgets.QFileDialog.DontUseNativeDialog
@@ -31,7 +43,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if fileName:
             shaderPath = fileName
             winShaderPath = shaderPath.replace("/","\\\\")
-            print(winShaderPath)
         
             computeHandler.setShaderPath(winShaderPath)
         
@@ -58,24 +69,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
         # Read back the texture data.
         imageDataPtr = computeHandler.readBackData()
-        imageData=[imageDataPtr[i] for i in range(textureSize)]
+        if imageDataPtr:
+            imageData=[imageDataPtr[i] for i in range(textureSize)]
         
-        # Construct image from the raw byte data.
-        image = QtGui.QImage(bytearray(imageData), imageWidth, imageHeight, stride, QtGui.QImage.Format_RGBA8888 )
+            # Construct image from the raw byte data.
+            image = QtGui.QImage(bytearray(imageData), imageWidth, imageHeight, stride, QtGui.QImage.Format_RGBA8888 )
         
-        # Create buffer and save image data into the buffer.
-        # Note: Including the image header required for QPixmap to create image data.
-        imageByteArray = QtCore.QByteArray()
-        imageBuffer = QtCore.QBuffer(imageByteArray)
-        imageBuffer.open(QtCore.QIODevice.ReadWrite)
-        image.save(imageBuffer, "JPG")
+            # Create buffer and save image data into the buffer.
+            # Note: Including the image header required for QPixmap to create image data.
+            imageByteArray = QtCore.QByteArray()
+            imageBuffer = QtCore.QBuffer(imageByteArray)
+            imageBuffer.open(QtCore.QIODevice.ReadWrite)
+            image.save(imageBuffer, "JPG")
         
-        # Create pixmap used to present preview image.
-        pixmap = QtGui.QPixmap()
-        pixmap.loadFromData(imageBuffer.data())
+            # Create pixmap used to present preview image.
+            pixmap = QtGui.QPixmap()
+            pixmap.loadFromData(imageBuffer.data())
         
-        self.PreviewImageLabel.setPixmap(pixmap)
-        self.PreviewImageLabel.show()
+            self.PreviewImageLabel.setPixmap(pixmap)
+            self.PreviewImageLabel.show()
+        else:
+            print("[ERROR] Image data is empty")
 
 app = QtWidgets.QApplication(sys.argv)
 
