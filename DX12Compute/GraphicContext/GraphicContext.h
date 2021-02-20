@@ -12,9 +12,9 @@ public:
 
     bool Wait();
 
-    ID3D12CommandQueue* getCommandQueuePtr() const { return commandQueue.Get(); };
-    ID3D12Device* getDevicePtr() const { return device.Get(); }
-    ID3D12Fence* getFencePtr() const { return fence.Get(); }
+    ID3D12CommandQueue* GetCommandQueuePtr() const { return commandQueue.Get(); };
+    ID3D12Device* GetDevicePtr() const { return device.Get(); }
+    ID3D12Fence* GetFencePtr() const { return fence.Get(); }
 
 private:
     bool Initialize();

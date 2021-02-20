@@ -7,10 +7,14 @@
 
 #include <d3dcompiler.h>
 
+#include <windows.h>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
 
+#define BUF_SIZE 8294400 // 1920 * 1080 * 4 (Current image limit)
+
+TCHAR mappingObjectName[] = TEXT("Global\\ImageMappingObject");
 
 Compute::Compute() :
     textureSize(0),
@@ -36,13 +40,39 @@ Compute::Compute() :
     device(nullptr),
     queue(nullptr),
     inputColors(),
-    imageData(),
     shaderPath()
 {
+    mapFile = CreateFileMapping(INVALID_HANDLE_VALUE,
+                                NULL,
+                                PAGE_READWRITE,
+                                0,
+                                BUF_SIZE,
+                                mappingObjectName);
+
+    if (mapFile == NULL)
+    {
+        PrintStatus("FAIL", "Shared file mapping was NULL!\n");
+        exit(0);
+    }
+    sharedMemoryBuffer = (LPCSTR)MapViewOfFile(mapFile,
+                                               FILE_MAP_ALL_ACCESS,
+                                               0,
+                                               0,
+                                               BUF_SIZE);
+
+    if (sharedMemoryBuffer == NULL)
+    {
+        PrintStatus("FAIL", "Shared memory buffer was NULL!\n");
+
+        CloseHandle(mapFile);
+
+        exit(0);
+    }
+
     graphicContext = new GraphicContext();
 
-    device = graphicContext->getDevicePtr();
-    queue = graphicContext->getCommandQueuePtr();
+    device = graphicContext->GetDevicePtr();
+    queue = graphicContext->GetCommandQueuePtr();
 
     ResetSamplerDesc();
     ResetUAVSRVDescriptions();
@@ -57,6 +87,10 @@ Compute::Compute() :
 
 Compute::~Compute()
 {
+    UnmapViewOfFile(sharedMemoryBuffer);
+
+    CloseHandle(mapFile);
+
     delete graphicContext;
 }
 
@@ -70,6 +104,10 @@ void Compute::SetTextureSize(int width, int height, int pixelSize)
     texturePixelSize = pixelSize;
     textureWidth = width;
     textureHeight = height;
+
+    textureSize = textureWidth * textureHeight * texturePixelSize;
+
+    inputColors.resize(textureSize);
 }
 
 void Compute::SetDispatchSize(int x, int y, int z)
@@ -77,32 +115,6 @@ void Compute::SetDispatchSize(int x, int y, int z)
     dispatchX = x;
     dispatchY = y;
     dispatchZ = z;
-}
-
-bool Compute::ResetPipelineState(const char* shaderEntryPoint, const char* shaderVersion)
-{
-    Microsoft::WRL::ComPtr <ID3DBlob> shaderBlob;
-    if (!ReportStatus(D3DCompileFromFile(
-        shaderPath.c_str(),
-        nullptr,
-        D3D_COMPILE_STANDARD_FILE_INCLUDE,
-        shaderEntryPoint, shaderVersion,
-        D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
-        0,
-        &shaderBlob,
-        nullptr), "Compile shader"))
-            return false;
-
-    // Create the pipeline state object for the compute shader using the root signature.
-    D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc = {};
-    psoDesc.pRootSignature = rootSignature.Get();
-    psoDesc.CS.pShaderBytecode = shaderBlob->GetBufferPointer();
-    psoDesc.CS.BytecodeLength = shaderBlob->GetBufferSize();
-
-    if (!ReportStatus(device->CreateComputePipelineState(&psoDesc, IID_PPV_ARGS(&pipelineState)), "Create compute pipeline state"))
-        return false;
-
-    return true;
 }
 
 bool Compute::CreateDescriptorHeap()
@@ -204,12 +216,8 @@ bool Compute::CreateGraphicsList()
 bool Compute::CreateSourceTextureResource()
 {
     // Texture data
-    textureSize = textureWidth * textureHeight * texturePixelSize;
-    inputColors.resize(textureSize);
-    for (unsigned int i = 0; i < textureSize; i++)
-    {
-        inputColors[i] = 0;
-    }
+    // Provide base image data from GUI...
+    CopyMemory(inputColors.data(), (PVOID)sharedMemoryBuffer, textureSize);
 
     textureResourceDescription.Width = textureWidth;
     textureResourceDescription.Height = textureHeight;
@@ -260,6 +268,35 @@ void Compute::UpdateSubResource()
     textureData.SlicePitch = textureData.RowPitch * textureHeight;
 
     UpdateSubresources(graphicsCommandList.Get(), textureResource.Get(), textureUploadHeap.Get(), 0, 0, 1, &textureData);
+}
+
+bool Compute::ResetPipelineState(const char* shaderEntryPoint, const char* shaderVersion)
+{
+    Microsoft::WRL::ComPtr <ID3DBlob> shaderBlob;
+    if (!ReportStatus(D3DCompileFromFile(
+        shaderPath.c_str(),
+        nullptr,
+        D3D_COMPILE_STANDARD_FILE_INCLUDE,
+        shaderEntryPoint, shaderVersion,
+        D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
+        0,
+        &shaderBlob,
+        nullptr), "Compile shader")) 
+    {
+        //OutputDebugString((WCHAR*)shaderBlob->GetBufferPointer());
+        return false;
+    }
+
+    // Create the pipeline state object for the compute shader using the root signature.
+    D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc = {};
+    psoDesc.pRootSignature = rootSignature.Get();
+    psoDesc.CS.pShaderBytecode = shaderBlob->GetBufferPointer();
+    psoDesc.CS.BytecodeLength = shaderBlob->GetBufferSize();
+
+    if (!ReportStatus(device->CreateComputePipelineState(&psoDesc, IID_PPV_ARGS(&pipelineState)), "Create compute pipeline state"))
+        return false;
+
+    return true;
 }
 
 void Compute::ResetSamplerDesc()
@@ -388,8 +425,7 @@ bool Compute::ExecuteComputeJob()
     void* readBackImageData = nullptr;
     pReadbackResource->Map(0, nullptr, &readBackImageData);
 
-    imageData.resize(textureSize);
-    std::copy(static_cast<unsigned char*>(readBackImageData), static_cast<unsigned char*>(readBackImageData) + sizeInBytes, imageData.begin());
+    CopyMemory((PVOID)sharedMemoryBuffer, readBackImageData, textureSize);
 
     readBackImageData = nullptr;
 

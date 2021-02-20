@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>689</height>
+    <width>763</width>
+    <height>701</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,61 +30,33 @@
          <string>Preview</string>
         </property>
         <layout class="QGridLayout" name="LeftRegionGroupLayout">
-         <item row="2" column="0">
-          <layout class="QGridLayout" name="ImageSettingsLayout">
-           <item row="0" column="1">
-            <widget class="QGroupBox" name="ImageSettingsGroupBox">
-             <property name="title">
-              <string>Image Settings</string>
-             </property>
-             <layout class="QGridLayout" name="ImageSettingsGroupBoxLayout">
-              <item row="0" column="0">
-               <layout class="QGridLayout" name="ImageDimensionsLayout">
-                <item row="0" column="0">
-                 <widget class="QGroupBox" name="ImageDimensionsGroupBox">
-                  <property name="title">
-                   <string>Dimensions</string>
-                  </property>
-                  <layout class="QGridLayout" name="ImageDimensionsGroupBoxLayout">
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="ImageHeightLabel">
-                     <property name="text">
-                      <string>Height</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="ImageWidthLabel">
-                     <property name="text">
-                      <string>Width</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QLineEdit" name="ImageHeightLineEdit">
-                     <property name="text">
-                      <string>0</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QLineEdit" name="ImageWidthLineEdit">
-                     <property name="text">
-                      <string>0</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
-         </item>
          <item row="2" column="1">
+          <widget class="QPushButton" name="SaveImageButton">
+           <property name="text">
+            <string>Save Image</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="LoadImageButton">
+           <property name="text">
+            <string>Load Image</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="2">
+          <widget class="QPushButton" name="DispatchButton">
+           <property name="font">
+            <font>
+             <pointsize>15</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Dispatch</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
           <layout class="QGridLayout" name="DispatchSettingsLayout">
            <item row="0" column="0">
             <widget class="QGroupBox" name="DispatchSettingsBox">
@@ -93,59 +65,55 @@
              </property>
              <layout class="QGridLayout" name="DispatchSettingsBoxLayout">
               <item row="0" column="0">
-               <layout class="QGridLayout" name="DispatchDimensionsLayout">
-                <item row="0" column="0">
-                 <widget class="QGroupBox" name="DispatchDimensionsGroupBox">
-                  <property name="title">
-                   <string>Dimensions</string>
-                  </property>
-                  <layout class="QGridLayout" name="DispatchDimensionsGroupBoxlayout">
-                   <item row="0" column="1">
-                    <widget class="QLineEdit" name="DispatchXLineEdit">
-                     <property name="text">
-                      <string>0</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="0">
-                    <widget class="QLabel" name="DispatchZLabel">
-                     <property name="text">
-                      <string>Z</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="DispatchXLabel">
-                     <property name="text">
-                      <string>X</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="DispatchYLabel">
-                     <property name="text">
-                      <string>Y</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="1">
-                    <widget class="QLineEdit" name="DispatchZLineEdit">
-                     <property name="text">
-                      <string>1</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QLineEdit" name="DispatchYLineEdit">
-                     <property name="text">
-                      <string>0</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-               </layout>
+               <widget class="QGroupBox" name="DispatchDimensionsGroupBox">
+                <property name="title">
+                 <string>Dimensions</string>
+                </property>
+                <layout class="QGridLayout" name="DispatchDimensionsGroupBoxlayout">
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="DispatchZLabel">
+                   <property name="text">
+                    <string>Z</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QLineEdit" name="DispatchZLineEdit">
+                   <property name="text">
+                    <string>1</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="DispatchYLabel">
+                   <property name="text">
+                    <string>Y</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QLineEdit" name="DispatchYLineEdit">
+                   <property name="text">
+                    <string>0</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="DispatchXLabel">
+                   <property name="text">
+                    <string>X</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLineEdit" name="DispatchXLineEdit">
+                   <property name="text">
+                    <string>0</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -175,18 +143,59 @@
            </item>
           </layout>
          </item>
-         <item row="3" column="0" colspan="2">
-          <layout class="QGridLayout" name="DispatchButtonLayout">
-           <item row="0" column="0">
-            <widget class="QPushButton" name="DispatchButton">
-             <property name="font">
-              <font>
-               <pointsize>15</pointsize>
-              </font>
+         <item row="3" column="0">
+          <layout class="QGridLayout" name="ImageSettingsLayout">
+           <item row="0" column="1">
+            <widget class="QGroupBox" name="ImageSettingsGroupBox">
+             <property name="title">
+              <string>Image Settings</string>
              </property>
-             <property name="text">
-              <string>Dispatch</string>
-             </property>
+             <layout class="QGridLayout" name="ImageSettingsGroupBoxLayout">
+              <item row="1" column="0">
+               <widget class="QGroupBox" name="ImageDimensionsGroupBox">
+                <property name="title">
+                 <string>Dimensions</string>
+                </property>
+                <layout class="QGridLayout" name="ImageDimensionsGroupBoxLayout">
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="ImageHeightLabel">
+                   <property name="text">
+                    <string>Height</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="ImageWidthLabel">
+                   <property name="text">
+                    <string>Width</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLineEdit" name="ImageWidthLineEdit">
+                   <property name="text">
+                    <string>0</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QLineEdit" name="ImageHeightLineEdit">
+                   <property name="text">
+                    <string>0</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QCheckBox" name="UsePreviewDataCheckBox">
+                <property name="text">
+                 <string>Use Preview Texture</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>
@@ -219,7 +228,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>763</width>
      <height>21</height>
     </rect>
    </property>

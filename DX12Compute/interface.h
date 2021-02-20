@@ -36,10 +36,4 @@ extern "C"
 		Compute* ref = reinterpret_cast<Compute*>(ptr);
 		return ref->Dispatch();
 	}
-
-	__declspec(dllexport) unsigned char* readBackData(void* ptr)
-	{
-		Compute* ref = reinterpret_cast<Compute*>(ptr);
-		return ref->GetImageData();
-	}
 };

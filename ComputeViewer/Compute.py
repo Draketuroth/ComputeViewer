@@ -13,10 +13,9 @@ class ComputeHandler:
     
     lib.createCompute.restype = InstanceHandle
     
-    lib.readBackData.argtypes = [InstanceHandle]
-    lib.readBackData.restype = ct.POINTER(ct.c_ubyte)
-    
     lib.setShaderPath.argTypes = [InstanceHandle, ct.c_wchar_p]
+    
+    lib.dispatch.restype = ct.c_bool
     
     # Store the compute class instance.
     self.instance = lib.createCompute()
@@ -40,7 +39,3 @@ class ComputeHandler:
   def dispatch(self):
     """Dispatches the compute pipeline and stores image data"""
     return lib.dispatch(self.instance)
-  
-  def readBackData(self):
-    """Reads back the result from previous dispatch call"""
-    return lib.readBackData(self.instance)

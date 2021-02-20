@@ -17,8 +17,6 @@ public:
     void SetTextureSize(int width, int height, int pixelSize);
     void SetDispatchSize(int x, int y, int z);
 
-    unsigned char* GetImageData() { return imageData.data(); }
-
     bool Dispatch();
 
 private:
@@ -67,8 +65,10 @@ private:
     ID3D12Device* device;
     ID3D12CommandQueue* queue;
 
-    std::vector<char> inputColors;
-    std::vector<unsigned char> imageData;
+    HANDLE mapFile;
+    LPCSTR sharedMemoryBuffer;
+
+    std::vector<unsigned char> inputColors;
 
     std::wstring shaderPath;
     GraphicContext* graphicContext;
