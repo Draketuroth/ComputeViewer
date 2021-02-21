@@ -377,7 +377,7 @@ bool Compute::ExecuteComputeJob()
     graphicsCommandList->SetComputeRootDescriptorTable(2, currentGPUHandle);
     currentGPUHandle.Offset(1, descriptorSize);
 
-    //Dispatch the compute shader with one thread per 8x8 pixels
+    // Dispatch the compute shader with one thread per 8x8 pixels
     UINT dispatchGroupsX = (textureWidth + (dispatchX - 1)) / dispatchX;
     UINT dispatchGroupsY = (textureHeight + (dispatchY - 1)) / dispatchY;
     UINT dispatchGroupsZ = 1;

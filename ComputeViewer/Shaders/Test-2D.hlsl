@@ -6,6 +6,6 @@ SamplerState Sampler : register(s0);
 void main(uint3 DTid : SV_DispatchThreadID)
 {
 	//Write the final color into the destination texture.
-	float4 Color = float4(1.0, 0.0, 1.0, 1.0);
-	DstTexture[DTid.xy] = SrcTexture[DTid.xy] * Color; // Simple tinting.
+	float4 pixel = SrcTexture[DTid.xy];
+	DstTexture[DTid.xy] = float4(pixel.x + 0.5, pixel.y, pixel.z, pixel.a);
 }

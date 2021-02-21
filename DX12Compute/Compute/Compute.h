@@ -68,6 +68,7 @@ private:
     HANDLE mapFile;
     LPCSTR sharedMemoryBuffer;
 
+
     std::vector<unsigned char> inputColors;
 
     std::wstring shaderPath;

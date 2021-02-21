@@ -189,10 +189,22 @@
                </widget>
               </item>
               <item row="0" column="0">
-               <widget class="QCheckBox" name="UsePreviewDataCheckBox">
-                <property name="text">
-                 <string>Use Preview Texture</string>
-                </property>
+               <widget class="QComboBox" name="InputImageSettings">
+                <item>
+                 <property name="text">
+                  <string>Use Default Image</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Use Source Image</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Use Preview Image</string>
+                 </property>
+                </item>
                </widget>
               </item>
              </layout>

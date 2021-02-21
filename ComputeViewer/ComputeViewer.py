@@ -7,17 +7,30 @@ from Compute import ComputeHandler
 
 from ComputeViewerUi import Ui_MainWindow
 
+DEFAULT_IMAGE = 0
+SOURCE_IMAGE = 1
+PREVIEW_IMAGE = 2
+
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     
     shaderPath = ""
     imagePath = ""
-    inputImage = QtGui.QImage()
+    imageList = []
+    previewPixMap = ""
     
     def __init__(self, *args, obj=None, **kwargs):
         """Initializes the GUI main window"""
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
         self.setupUiComponents()
+        
+        self.previewPixMap = QtGui.QPixmap()
+        
+        self.imageList.append(QtGui.QImage(512, 512, QtGui.QImage.Format_RGBA8888))
+        self.imageList.append(QtGui.QImage(512, 512, QtGui.QImage.Format_RGBA8888))
+        self.imageList.append(QtGui.QImage(512, 512, QtGui.QImage.Format_RGBA8888))
+        
+        self.imageList[DEFAULT_IMAGE].fill(QtGui.QColor(0,0,0,1))
         
     def setupUiComponents(self):
         """Prepares UI elements and connect to callback functions"""
@@ -64,17 +77,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if fileName:
             imagePath = fileName
             
-            self.inputImage = QtGui.QImage(imagePath)
+            self.imageList[SOURCE_IMAGE] = QtGui.QImage(imagePath)
+            self.imageList[PREVIEW_IMAGE] = self.imageList[SOURCE_IMAGE]
             
-            pixmap = QtGui.QPixmap()
-            pixmap.convertFromImage(self.inputImage)
+            self.previewPixMap.convertFromImage(self.imageList[SOURCE_IMAGE])
             
-            self.ImageWidthLineEdit.setText(str(pixmap.width()))
-            self.ImageHeightLineEdit.setText(str(pixmap.height()))
-            self.UsePreviewDataCheckBox.setChecked(True)
+            self.ImageWidthLineEdit.setText(str(self.previewPixMap.width()))
+            self.ImageHeightLineEdit.setText(str(self.previewPixMap.height()))
             
-            self.PreviewImageLabel.setPixmap(pixmap)
+            self.PreviewImageLabel.setPixmap(self.previewPixMap)
             self.PreviewImageLabel.show()
+            
+    def getInputImage(self):
+        return self.imageList[self.InputImageSettings.currentIndex()]
         
     def dispatchFunc(self):
         """Creates a dispatch call from current settings and updates preview image"""
@@ -95,20 +110,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         computeHandler.setDispatchSize(dispatchX, dispatchY, dispatchZ)
         
         # Set preview image as source texture (if option is checked)
-        usePreviewData = self.UsePreviewDataCheckBox.isChecked()
-        if usePreviewData:
-            imgData = []
-            for x in range(imageWidth):
-                for y in range(imageHeight):
-                    r, g, b, a = QtGui.QColor(self.inputImage.pixel(y, x)).getRgb()
-                    imgData.append(r)
-                    imgData.append(g)
-                    imgData.append(b)
-                    imgData.append(a)
+        inputImage = self.getInputImage()
+        imageData = []
+        for x in range(imageWidth):
+            for y in range(imageHeight):
+                r, g, b, a = QtGui.QColor(inputImage.pixel(y, x)).getRgb()
+                imageData.append(r)
+                imageData.append(g)
+                imageData.append(b)
+                imageData.append(a)
             
-            #arr = (ctypes.c_ubyte * len(imgData))(*imgData)
-            qImageDataPtr = mmap.mmap(-1, textureSize, "Global\\ImageMappingObject", mmap.ACCESS_WRITE)
-            qImageDataPtr.write(bytearray(imgData))
+        qImageDataPtr = mmap.mmap(-1, textureSize, "Global\\ImageMappingObject", mmap.ACCESS_WRITE)
+        qImageDataPtr.write(bytearray(imageData))
         
         # Perform the dispatch, storing the produced image in the compute instance.
         computeHandler.dispatch()
@@ -128,11 +141,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             image.save(imageBuffer, "JPG")
         
             # Create pixmap used to present preview image.
-            pixmap = QtGui.QPixmap()
-            pixmap.loadFromData(imageBuffer.data())
+            self.previewPixMap.loadFromData(imageBuffer.data())
         
-            self.PreviewImageLabel.setPixmap(pixmap)
+            self.PreviewImageLabel.setPixmap(self.previewPixMap)
             self.PreviewImageLabel.show()
+            
+            self.imageList[PREVIEW_IMAGE] = self.previewPixMap.toImage()
         else:
             print("[ERROR] Image data is empty")
 
