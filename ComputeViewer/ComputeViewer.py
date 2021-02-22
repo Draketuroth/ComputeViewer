@@ -38,8 +38,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
         self.DispatchButton.clicked.connect(self.dispatchFunc)
         self.LoadImageButton.clicked.connect(self.loadImageFile)
+        self.SaveImageButton.clicked.connect(self.saveImageFile)
         
-        self.actionLoad.triggered.connect(self.loadShaderFile)
+        self.actionLoad.triggered.connect(self.setShaderFile)
         
         self.actionAbout.triggered.connect(self.openAboutDialog)
         
@@ -56,16 +57,28 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         msg = "Compute Viewer 1.0\nAuthor: Fredrik Linde"
         QtWidgets.QMessageBox.about(self, "About", msg)
         
-    def openFileNameDialog(self):
+    def openFileNameDialog(self, title, extensions):
         """Opens a file dialog to receive path to file on disk"""
         
+        dir = QtCore.QDir.currentPath()
+        
         options = QtWidgets.QFileDialog.Options()
-        options |= QtWidgets.QFileDialog.DontUseNativeDialog
-        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
+        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, title, dir, extensions, options=options)
+        return fileName
+    
+    def saveFileNameDialog(self, title, extensions):
+        """Opens a file dialog to create path to save file on disk"""
+        
+        dir = QtCore.QDir.currentPath()
+        defaultName = "Untitled-1"
+        
+        options = QtWidgets.QFileDialog.Options()
+        fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self, title, dir + "/" + defaultName, extensions, options=options)
         return fileName
         
-    def loadShaderFile(self):
-        fileName = self.openFileNameDialog()
+    def setShaderFile(self):
+        """Loads the active active shader into the editor to be used for dispatch"""
+        fileName = self.openFileNameDialog("Load shader", "HLSL Files (*.hlsl)")
         if fileName:
             shaderPath = fileName
             winShaderPath = shaderPath.replace("/","\\\\")
@@ -73,9 +86,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             computeHandler.setShaderPath(winShaderPath)
             
     def loadImageFile(self):
-        fileName = self.openFileNameDialog()
+        fileName = self.openFileNameDialog("Load Image", "JPEG (*.jpg);;PNG (*.png)")
         if fileName:
             imagePath = fileName
+            
+            self.InputImageSettings.setCurrentIndex(SOURCE_IMAGE)
             
             self.imageList[SOURCE_IMAGE] = QtGui.QImage(imagePath)
             self.imageList[PREVIEW_IMAGE] = self.imageList[SOURCE_IMAGE]
@@ -88,7 +103,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.PreviewImageLabel.setPixmap(self.previewPixMap)
             self.PreviewImageLabel.show()
             
+    def saveImageFile(self):
+        fileName = self.saveFileNameDialog("Save Image", "JPEG (*.jpg);;PNG (*.png)")
+        if fileName:
+            self.previewPixMap.save(fileName)
+            
     def getInputImage(self):
+        """Returns the input image to be used for the dispatch call"""
+        
         return self.imageList[self.InputImageSettings.currentIndex()]
         
     def dispatchFunc(self):
